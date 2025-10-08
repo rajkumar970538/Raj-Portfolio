@@ -3,42 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Raj Kumar Guguloth - Front-End Developer</title>
+  <title>Raj Kumar Guguloth - Portfolio</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="light">
 
-  <nav>
-    <div>
-      <a href="#about">About</a>
-      <a href="#skills">Skills</a>
-      <a href="#projects">Projects</a>
-      <a href="#timeline">Timeline</a>
-      <a href="#objective">Objective</a>
-    </div>
-    <button class="toggle-btn" id="theme-toggle">Dark Mode</button>
-  </nav>
+  <!-- Canvas for bat & ball -->
+  <canvas id="gameCanvas"></canvas>
 
-  <header>
-    <img src="images/profile.jpg" alt="Raj Kumar Guguloth">
+  <!-- Dark/Light toggle -->
+  <button id="theme-toggle" class="toggle-btn">Dark Mode</button>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <img src="images/profile.jpg" alt="Raj Kumar Guguloth" class="profile-img">
     <h1>Raj Kumar Guguloth</h1>
     <p>Front-End Developer | MCA 2021</p>
-    <p>📱 7013511294 | ✉ rajkumar970538@gmail.com</p>
-    <p>
-      <a href="#" target="_blank">LinkedIn</a> | 
-      <a href="#" target="_blank">GitHub</a>
-    </p>
+    <div class="floating-icons">
+      <img src="images/cricket.png" alt="Cricket" class="hobby-icon">
+      <img src="images/movie.png" alt="Movie" class="hobby-icon">
+    </div>
   </header>
 
-  <section id="about" class="about">
+  <!-- About Section -->
+  <section id="about">
     <h2>About Me</h2>
-    <p>MCA graduate passionate about creating responsive and visually appealing web applications. Currently working as an Inventory Executive, now seeking a front-end developer role.</p>
+    <p>MCA graduate passionate about creating interactive web applications. Currently working as Inventory Executive, now pursuing a Front-End Developer role.</p>
   </section>
 
-  <section id="skills" class="skills">
+  <!-- Skills Section -->
+  <section id="skills">
     <h2>Skills</h2>
     <div class="skill">
       <div class="skill-name">HTML</div>
       <div class="skill-bar"><div style="--skill-level:90%;"></div></div>
     </div>
-    <div
+    <div class="skill">
+      <div class="skill-name">CSS</div>
+      <div class="skill-bar"><div style="--skill-level:85%;"></div></div>
+    </div>
+    <div class="skill">
+      <div class="skill-name">JavaScript</div>
+      <div class="skill-bar"><div style="--skill-level:80%;"></div></div>
+    </div>
+    <div class="skill">
+      <div class="skill-name">React.js</div>
+      <div class="skill-bar"><div style="--skill-level:70%;"></div></div>
+    </div>
+    <div class="skill">
+      <div class="skill-name">Bootstrap/Tailwind</div>
+      <div class="skill-bar"><div style="--skill-level:75%;"></div></div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects">
+    <h2>Projects</h2>
+    <div class="project">
+      <h3>Online Public Shaming Detection on Twitter</h3>
+      <p>Analysis and mitigation of online public shaming content.</p>
+      <a href="#" target="_blank">GitHub Link</a>
+    </div>
+    <div class="project">
+      <h3>Email Alerts on WhatsApp by Twilio</h3>
+      <p>Automated email notifications sent to WhatsApp using Twilio.</p>
+      <a href="#" target="_blank">GitHub Link</a>
+    </div>
+  </section>
+
+  <!-- Timeline Section -->
+  <section id="timeline">
+    <h2>Education & Experience</h2>
+    <div class="timeline-item left">
+      <h3>MCA – Sri Chaitanya College of Engineering (2021)</h3>
+      <p>Completed Master of Computer Applications with focus on software development.</p>
+    </div>
+    <div class="timeline-item right">
+      <h3>Inventory Executive – CEC Health Care (2021–Present)</h3>
+      <p>Managed inventory and optimized workflows.</p>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Phone: 7013511294</p>
+    <p>Email: rajkumar970538@gmail.com</p>
+    <p>LinkedIn: <span id="linkedin-placeholder">[Coming Soon]</span></p>
+    <p>GitHub: <span id="github-placeholder">[Coming Soon]</span></p>
+  </section>
+
+  <footer>&copy; 2025 Raj Kumar Guguloth. All rights reserved.</footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
