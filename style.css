@@ -1,0 +1,25 @@
+:root {
+  --primary: #1f78ff;
+  --bg-color: #f4f4f9;
+  --text-color: #333;
+  --card-bg: white;
+}
+
+[data-theme="dark"] {
+  --bg-color: #1c1c1c;
+  --text-color: #f4f4f9;
+  --card-bg: #2c2c2c;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  scroll-behavior: smooth;
+  trans
