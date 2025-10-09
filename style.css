@@ -1,68 +1,118 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-
 body {
-  background: radial-gradient(circle at 20% 30%, #001f3f, #000);
+  margin: 0;
+  overflow-x: hidden;
+  background: radial-gradient(circle at center, #0a0a0a, #000);
+  font-family: "Poppins", sans-serif;
   color: #fff;
-  overflow: hidden;
 }
 
-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 0;
-}
-
-.container {
+/* --------- Game Styles --------- */
+.game-container {
   position: relative;
-  z-index: 2;
-  max-width: 900px;
-  margin: 100px auto;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  padding: 30px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
-  animation: fadeIn 2s ease forwards;
+  width: 100vw;
+  height: 70vh;
+  overflow: hidden;
+  background: linear-gradient(to top, #000, #0a1f3f);
 }
 
-h1 {
-  font-size: 2.5em;
-  color: #00eaff;
+#bat {
+  position: absolute;
+  width: 120px;
+  height: 20px;
+  background: linear-gradient(90deg, #ffcc00, #ff8800);
+  border-radius: 10px;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: left 0.05s ease;
+  box-shadow: 0 0 15px #ff8800;
+}
+
+#ball {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  background: radial-gradient(circle, #00ffcc, #0077ff);
+  border-radius: 50%;
+  top: 100px;
+  left: 100px;
+  box-shadow: 0 0 15px #00ffcc;
+}
+
+#scoreboard {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 22px;
+  color: #00ffcc;
+  font-weight: 600;
+}
+
+.title {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
-  text-shadow: 0 0 10px #00eaff;
+  color: #00ffcc;
+}
+
+.title h1 {
+  font-size: 36px;
+  margin: 0;
+  color: #ffcc00;
+  text-shadow: 0 0 15px #ff8800;
+}
+
+.title p {
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+/* --------- Portfolio Section --------- */
+.portfolio {
+  padding: 30px;
+  max-width: 900px;
+  margin: auto;
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+  margin-top: -50px;
+}
+
+.portfolio img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto 15px;
+  border: 3px solid #00ffcc;
+}
+
+section {
+  margin-top: 20px;
 }
 
 h2 {
-  color: #00eaff;
-  margin-top: 20px;
-  border-bottom: 1px solid #00eaff;
+  color: #00ffcc;
+  border-bottom: 1px solid rgba(0,234,255,0.06);
   padding-bottom: 5px;
 }
 
 p, li {
   line-height: 1.6;
-  margin-top: 10px;
+  margin-top: 8px;
+  color: #eafcff;
 }
 
-a {
-  color: #00eaff;
-  text-decoration: none;
+ul {
+  padding-left: 20px;
 }
 
 footer {
   text-align: center;
-  margin-top: 20px;
-  font-size: 0.9em;
-  color: #aaa;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(50px); }
-  to { opacity: 1; transform: translateY(0); }
+  margin: 20px 0;
+  color: #888;
+  font-size: 0.9rem;
 }
