@@ -1,76 +1,150 @@
-/* Neon / cyber style */
-:root{
-  --bg:#071025;
-  --panel: rgba(255,255,255,0.04);
-  --neon:#1ff1d6;
-  --accent:#6f8cff;
-  --muted:rgba(255,255,255,0.6);
-  --glass: rgba(255,255,255,0.03);
-  --ui-z: 100;
-}
+// Improved game script with safer guards and DPR scaling
+window.addEventListener('load', () => {
+  // Elements (guarded — may be null if markup differs)
+  const canvas = document.getElementById('gameCanvas');
+  if(!canvas){ console.error('Game canvas not found (id=gameCanvas).'); return; }
+  const ctx = canvas.getContext('2d');
 
-*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  const startBtn = document.getElementById('startBtn');
+  const startScreen = document.getElementById('startScreen');
+  const hud = document.getElementById('hud');
+  const levelIndicator = document.getElementById('levelIndicator');
+  const orbsCountEl = document.getElementById('orbsCount');
+  const modal = document.getElementById('modal');
+  const modalClose = document.getElementById('modalClose');
+  const muteBtn = document.getElementById('muteBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const endScreen = document.getElementById('endScreen');
+  const replayBtn = document.getElementById('replayBtn');
 
-html,body{height:100%;}
-body{background:linear-gradient(180deg,#03102a,#071025);color:white;overflow:hidden;}
+  if(!startBtn) console.warn('startBtn not found — cannot start from UI.');
+  if(!hud) console.warn('HUD element not found.');
 
-/* canvas covers full page behind UI */
-canvas#gameCanvas {
-  position:fixed; left:0; top:0; width:100%; height:100%; z-index:0;
-  background: radial-gradient(circle at 10% 10%, rgba(111,140,255,0.06), transparent 10%),
-              radial-gradient(circle at 90% 80%, rgba(31,241,214,0.03), transparent 15%),
-              linear-gradient(180deg,#00101a, #03102a 60%);
-}
+  // audio optional
+  let audioEnabled = false;
+  const blip = new Audio('assets/blip.mp3');
+  blip.volume = 0.25;
 
-/* UI container */
-#ui{ position:relative; z-index:120; pointer-events:none; }
+  // canvas sizing with DPR
+  function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
 
-/* Start screen */
-.screen{ position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); width:92%; max-width:720px; text-align:center; pointer-events:auto; }
-.screen.hidden{ display:none; }
-.screen.active{ display:block; }
+  // Game state & profile
+  const PROFILE = {
+    name: "Raj Kumar Guguloth",
+    title: "Front-End Developer | MCA 2021",
+    phone: "7013511294",
+    email: "rajkumar970538@gmail.com",
+    projects: [
+      { id: "proj1", title: "Online Public Shaming Detection on Twitter", text: "Analysis & mitigation. (NLP, sentiment analysis).", link: "#" },
+      { id: "proj2", title: "Email Alerts on WhatsApp by Twilio", text: "Email -> WhatsApp alerts using Twilio.", link: "#" }
+    ],
+    skills: [ {name:"HTML", level:"90%"}, {name:"CSS", level:"85%"}, {name:"JavaScript", level:"80%"} ]
+  };
 
-#startScreen{
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-  border-radius:14px; padding:28px; box-shadow:0 12px 40px rgba(0,0,0,0.6);
-  border: 1px solid rgba(111,140,255,0.12);
-  backdrop-filter: blur(6px);
-}
+  const state = {
+    running: false,
+    level: 1,
+    orbs: 0,
+    maxLevel: 3,
+    player: { x: 120, y: 120, r: 14, speed: 4 },
+    orbsList: [],
+    projBlocks: [],
+    bat: { w: 120, h: 18, x: canvas.width/2 - 60, y: canvas.height - 90 },
+    ball: { x: 200, y: 140, r: 12, dx: 3.5, dy: 3.2 }
+  };
 
-#profilePreview{ width:120px; height:120px; object-fit:cover; border-radius:50%; border:4px solid rgba(255,255,255,0.06); display:block; margin:0 auto 12px; }
+  // Helpers
+  function dist(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
+  function rectCircleCollide(rect, circle){
+    const rx = Math.max(rect.x, Math.min(circle.x, rect.x + rect.w));
+    const ry = Math.max(rect.y, Math.min(circle.y, rect.y + rect.h));
+    return ( (circle.x - rx)**2 + (circle.y - ry)**2 ) < circle.r**2;
+  }
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
 
-h1{ font-size:28px; letter-spacing:0.6px; color:var(--neon); text-shadow:0 0 12px rgba(31,241,214,0.08); }
-h3{ margin-top:6px; color:var(--accent); font-weight:500; }
-.muted{ color:var(--muted); margin:12px 0; }
-.small{ color:var(--muted); margin-top:10px; font-size:13px; }
+  // spawn orbs & projects
+  function spawnOrbs(n=6){
+    state.orbsList = [];
+    const pad = 80;
+    for(let i=0;i<n;i++){
+      const x = pad + Math.random()*(window.innerWidth-2*pad);
+      const y = pad + Math.random()*(window.innerHeight-2*pad);
+      state.orbsList.push({ x, y, r: 12, id: `orb${i}`, name: PROFILE.skills[i % PROFILE.skills.length].name });
+    }
+  }
+  function spawnProjects(){
+    state.projBlocks = [];
+    const gap = 220;
+    const mid = window.innerWidth/2;
+    state.projBlocks.push({ x: mid - gap/2 - 120, y: window.innerHeight/2 - 40, w:220, h:120, id:"proj1", title: PROFILE.projects[0].title });
+    state.projBlocks.push({ x: mid + gap/2 - 100, y: window.innerHeight/2 - 40, w:220, h:120, id:"proj2", title: PROFILE.projects[1].title });
+  }
 
-.primary{
-  background: linear-gradient(90deg,var(--neon),var(--accent));
-  color:#00101a; border:none; padding:10px 18px; border-radius:8px; font-weight:700; cursor:pointer;
-  box-shadow: 0 8px 30px rgba(111,140,255,0.12), 0 2px 8px rgba(31,241,214,0.05);
-}
+  // show/hide modal (pause/resume)
+  function showModal(title, text, linksHtml=""){
+    if(!modal){ console.warn('Modal not found.'); return; }
+    modal.classList.remove('hidden');
+    modal.querySelector('#modalTitle')?.textContent = title;
+    modal.querySelector('#modalText')?.textContent = text;
+    modal.querySelector('#modalLinks') && (modal.querySelector('#modalLinks').innerHTML = linksHtml || '');
+    // pause
+    state.running = false;
+    console.log('Modal opened, game paused.');
+  }
+  function closeModal(){
+    if(!modal) return;
+    modal.classList.add('hidden');
+    // resume
+    state.running = true;
+    console.log('Modal closed, game resumed.');
+  }
+  modalClose?.addEventListener('click', closeModal);
 
-/* HUD (top) */
-#hud{ position:fixed; top:18px; left:50%; transform:translateX(-50%); display:flex; gap:14px; align-items:center; padding:8px 14px; background:var(--panel); border-radius:12px; pointer-events:auto; z-index:120; }
-#levelIndicator{ color:var(--neon); font-weight:700; padding-right:8px; border-right:1px solid rgba(255,255,255,0.04); }
-#score{ color:var(--muted); font-weight:600; }
-#hud button{ margin-left:8px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); padding:6px 8px; border-radius:8px; cursor:pointer; }
+  // HUD / UI initial state
+  hud && hud.classList.add('hidden');
+  document.getElementById('endScreen')?.classList.add('hidden');
+  modal && modal.classList.add('hidden');
 
-/* Modal */
-#modal{ position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); z-index:200; width:90%; max-width:560px; }
-#modalContent{ background:var(--glass); border-radius:12px; padding:18px; border:1px solid rgba(111,140,255,0.08); }
-#modal h2{ color:var(--neon); margin-bottom:6px; }
-#modal p{ color:var(--muted); margin-bottom:12px; }
-#modal a{ color:var(--accent); font-weight:700; }
+  // Start button
+  startBtn?.addEventListener('click', () => {
+    startScreen?.classList.add('hidden');
+    hud && hud.classList.remove('hidden');
+    state.running = true;
+    state.level = 1; state.orbs = 0;
+    orbsCountEl && (orbsCountEl.textContent = state.orbs);
+    levelIndicator && (levelIndicator.textContent = `Level ${state.level}`);
+    spawnOrbs(6); spawnProjects();
+    console.log('Game started');
+    if(audioEnabled) blip.play().catch(()=>{});
+  });
 
-/* End screen */
-#endScreen{ max-width:520px; background:var(--panel); padding:20px; border-radius:12px; }
+  // Mute toggle
+  muteBtn?.addEventListener('click', () => {
+    audioEnabled = !audioEnabled;
+    muteBtn.textContent = audioEnabled ? '🔇' : '🔈';
+  });
 
-/* Footer */
-#footer{ position:fixed; bottom:8px; left:50%; transform:translateX(-50%); font-size:12px; color:var(--muted); z-index:120; }
+  restartBtn?.addEventListener('click', () => { location.reload(); });
+  replayBtn?.addEventListener('click', () => { location.reload(); });
 
-/* Responsive */
-@media(max-width:760px){
-  #hud{ top:auto; bottom:12px; left:auto; right:12px; transform:none; flex-direction:column; align-items:flex-end; }
-  .screen{ width:95%; padding:16px; }
-}
+  // Controls
+  const keys = { ArrowUp:false, ArrowDown:false, ArrowLeft:false, ArrowRight:false };
+  window.addEventListener('keydown', e => { if(keys.hasOwnProperty(e.key)) keys[e.key] = true; });
+  window.addEventListener('keyup', e => { if(keys.hasOwnPropert
