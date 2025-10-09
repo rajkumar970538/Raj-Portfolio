@@ -1,72 +1,56 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const bat = document.getElementById("bat");
+const ball = document.getElementById("ball");
+const scoreEl = document.getElementById("score");
 
-let bat = { x: canvas.width / 2 - 50, y: canvas.height - 60, width: 100, height: 10, swing: 0 };
-let ball = { x: canvas.width / 2, y: canvas.height / 2, dx: 4, dy: 4, radius: 10 };
+let score = 0;
+let ballX = 100;
+let ballY = 100;
+let ballSpeedX = 4;
+let ballSpeedY = 4;
 
+// Move bat with mouse
 document.addEventListener("mousemove", (e) => {
-  bat.x = e.clientX - bat.width / 2;
+  let x = e.clientX - bat.offsetWidth / 2;
+  x = Math.max(0, Math.min(x, window.innerWidth - bat.offsetWidth));
+  bat.style.left = x + "px";
 });
 
-document.addEventListener("click", () => {
-  bat.swing = 15;
-  setTimeout(() => (bat.swing = 0), 150);
-});
-
-function drawBat() {
-  ctx.save();
-  ctx.translate(bat.x + bat.width / 2, bat.y);
-  ctx.rotate((-bat.swing * Math.PI) / 180);
-  ctx.fillStyle = "#00eaff";
-  ctx.fillRect(-bat.width / 2, 0, bat.width, bat.height);
-  ctx.restore();
-}
-
-function drawBall() {
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-  ctx.fillStyle = "#ffeb3b";
-  ctx.shadowBlur = 20;
-  ctx.shadowColor = "#ffeb3b";
-  ctx.fill();
-  ctx.closePath();
-}
-
+// Ball animation
 function moveBall() {
-  ball.x += ball.dx;
-  ball.y += ball.dy;
+  ballX += ballSpeedX;
+  ballY += ballSpeedY;
 
-  if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) ball.dx *= -1;
-  if (ball.y - ball.radius < 0) ball.dy *= -1;
+  if (ballX <= 0 || ballX >= window.innerWidth - ball.offsetWidth) ballSpeedX *= -1;
+  if (ballY <= 0) ballSpeedY *= -1;
+
+  const batRect = bat.getBoundingClientRect();
+  const ballRect = ball.getBoundingClientRect();
 
   if (
-    ball.y + ball.radius > bat.y &&
-    ball.x > bat.x &&
-    ball.x < bat.x + bat.width
+    ballRect.bottom >= batRect.top &&
+    ballRect.right >= batRect.left &&
+    ballRect.left <= batRect.right &&
+    ballRect.top <= batRect.bottom
   ) {
-    ball.dy = -Math.abs(ball.dy);
-    ball.dx += (Math.random() - 0.5) * 2;
+    ballSpeedY *= -1;
+    score++;
+    scoreEl.textContent = score;
+
+    bat.style.boxShadow = "0 0 30px #fff";
+    setTimeout(() => bat.style.boxShadow = "0 0 15px #ff8800", 150);
   }
 
-  if (ball.y + ball.radius > canvas.height) {
-    ball.x = canvas.width / 2;
-    ball.y = canvas.height / 2;
+  if (ballY > window.innerHeight) {
+    ballX = Math.random() * (window.innerWidth - 50);
+    ballY = 50;
+    score = 0;
+    scoreEl.textContent = score;
   }
+
+  ball.style.left = ballX + "px";
+  ball.style.top = ballY + "px";
+
+  requestAnimationFrame(moveBall);
 }
 
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBat();
-  drawBall();
-  moveBall();
-  requestAnimationFrame(animate);
-}
-
-animate();
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
+moveBall();
