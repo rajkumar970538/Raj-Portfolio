@@ -1,62 +1,84 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Raj Kumar Guguloth | Portfolio</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Raj Kumar Guguloth — Bat & Cinema Portfolio</title>
+  <style>
+    /* ---------- Visual / layout ---------- */
+    :root{
+      --accent:#00eaff;
+      --bg1:#00111a;
+      --bg2:#071025;
+      --panel: rgba(255,255,255,0.04);
+      --muted: rgba(255,255,255,0.65);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,Roboto,Arial;}
+    html,body{height:100%;}
+    body{
+      background: radial-gradient(circle at 10% 20%, rgba(0,160,200,0.08), transparent 8%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      color:#fff;
+      min-height:100vh;
+      overflow:auto; /* allow scrolling */
+    }
+
+    /* canvas is background */
+    canvas#gameCanvas{
+      position:fixed; left:0; top:0; width:100%; height:100%; z-index:0;
+      pointer-events:none; /* so UI stays clickable */
+    }
+
+    /* main content */
+    .wrap{
+      position:relative; z-index:2; max-width:1000px; margin:80px auto;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px; padding:30px; box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      animation: fadeInUp 900ms ease both;
+    }
+
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(22px);} to {opacity:1; transform:none;} }
+
+    header{ text-align:center; margin-bottom:18px; }
+    h1{ color:var(--accent); font-size:2.2rem; text-shadow:0 6px 18px rgba(0,230,255,0.06); }
+    p.lead{ color:var(--muted); margin-top:8px; }
+
+    section{ margin-top:18px; padding-top:8px; }
+    h2{ color:var(--accent); border-bottom:1px solid rgba(0,234,255,0.06); padding-bottom:6px; margin-bottom:10px; }
+    p, li{ color: #eafcff; line-height:1.6; margin-top:8px; }
+
+    footer{ text-align:center; margin-top:18px; color:var(--muted); font-size:0.9rem; }
+
+    /* small responsive */
+    @media (max-width:600px){
+      .wrap{ margin:30px 12px; padding:18px; }
+      h1{ font-size:1.6rem; }
+    }
+  </style>
 </head>
 <body>
   <canvas id="gameCanvas"></canvas>
 
-  <div class="container">
+  <div class="wrap">
     <header>
       <h1>🏏 Raj Kumar Guguloth</h1>
-      <p>Front-End Developer | MCA (2021)</p>
+      <p class="lead">Front-End Developer • MCA (2021) — Karimnagar, Telangana</p>
+      <p class="lead" style="margin-top:6px;">Phone: 7013511294 · Email: rajkumar970538@gmail.com</p>
     </header>
 
-    <section class="about">
+    <section id="about">
       <h2>About Me</h2>
-      <p>
-        Hi, I'm Raj Kumar from Karimnagar, Telangana. I completed my MCA from
-        Sri Chaitanya College of Engineering in 2021. Currently, I'm working as
-        an Inventory Executive at CEC Health Care, and I'm passionate about
-        becoming a creative Front-End Developer.
-      </p>
+      <p>I completed MCA (2021) from Sri Chaitanya College of Engineering. Currently working as an Inventory Executive at CEC Health Care and transitioning into Front-End development (HTML/CSS/JS/React).</p>
     </section>
 
-    <section class="projects">
+    <section id="projects">
       <h2>Projects</h2>
       <ul>
-        <li>🧠 <strong>Online Public Shaming on Twitter:</strong> Detection, Analysis, and Mitigation</li>
-        <li>📱 <strong>Email Alerts on WhatsApp:</strong> Using Twilio API for instant message notifications</li>
+        <li><strong>Online Public Shaming Detection on Twitter</strong> — Analysis & mitigation using NLP and rule-based methods.</li>
+        <li><strong>Email Alerts on WhatsApp (Twilio)</strong> — Automated email → WhatsApp alerts using Twilio API.</li>
       </ul>
     </section>
 
-    <section class="skills">
-      <h2>Skills</h2>
-      <p>HTML | CSS | JavaScript | GitHub | AI Prompting</p>
-    </section>
-
-    <section class="hobbies">
-      <h2>Hobbies</h2>
-      <p>🏏 Playing Cricket | 🎬 Watching Movies</p>
-    </section>
-
-    <section class="contact">
-      <h2>Contact</h2>
-      <p>📞 7013511294 | 📧 rajkumar970538@gmail.com</p>
-      <p>
-        🔗 LinkedIn: <a href="#">(Add later)</a> |
-        💻 GitHub: <a href="#">(Add later)</a>
-      </p>
-    </section>
-
-    <footer>
-      <p>© 2025 Raj Kumar Guguloth | Cinematic Portfolio Edition 🎥</p>
-    </footer>
-  </div>
-
-  <script src="script.js"></script>
-</body>
-</html>
+    <section id="skills">
+      <h
