@@ -1,84 +1,175 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Raj Kumar Guguloth — Bat & Cinema Portfolio</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raj Kumar | Bat & Ball Portfolio Demo</title>
+
   <style>
-    /* ---------- Visual / layout ---------- */
-    :root{
-      --accent:#00eaff;
-      --bg1:#00111a;
-      --bg2:#071025;
-      --panel: rgba(255,255,255,0.04);
-      --muted: rgba(255,255,255,0.65);
-    }
-    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,Roboto,Arial;}
-    html,body{height:100%;}
-    body{
-      background: radial-gradient(circle at 10% 20%, rgba(0,160,200,0.08), transparent 8%),
-                  linear-gradient(180deg, var(--bg1), var(--bg2));
-      color:#fff;
-      min-height:100vh;
-      overflow:auto; /* allow scrolling */
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #0a0a0a, #000);
+      color: white;
+      font-family: "Poppins", sans-serif;
     }
 
-    /* canvas is background */
-    canvas#gameCanvas{
-      position:fixed; left:0; top:0; width:100%; height:100%; z-index:0;
-      pointer-events:none; /* so UI stays clickable */
+    .game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    /* main content */
-    .wrap{
-      position:relative; z-index:2; max-width:1000px; margin:80px auto;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:14px; padding:30px; box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-      backdrop-filter: blur(6px);
-      animation: fadeInUp 900ms ease both;
+    #bat {
+      position: absolute;
+      width: 120px;
+      height: 20px;
+      background: linear-gradient(90deg, #ffcc00, #ff8800);
+      border-radius: 10px;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: left 0.05s ease;
+      box-shadow: 0 0 15px #ff8800;
     }
 
-    @keyframes fadeInUp { from { opacity:0; transform:translateY(22px);} to {opacity:1; transform:none;} }
+    #ball {
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      background: radial-gradient(circle, #00ffcc, #0077ff);
+      border-radius: 50%;
+      top: 100px;
+      left: 100px;
+      box-shadow: 0 0 15px #00ffcc;
+    }
 
-    header{ text-align:center; margin-bottom:18px; }
-    h1{ color:var(--accent); font-size:2.2rem; text-shadow:0 6px 18px rgba(0,230,255,0.06); }
-    p.lead{ color:var(--muted); margin-top:8px; }
+    #scoreboard {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 22px;
+      color: #00ffcc;
+      font-weight: 600;
+    }
 
-    section{ margin-top:18px; padding-top:8px; }
-    h2{ color:var(--accent); border-bottom:1px solid rgba(0,234,255,0.06); padding-bottom:6px; margin-bottom:10px; }
-    p, li{ color: #eafcff; line-height:1.6; margin-top:8px; }
+    /* Floating title */
+    .title {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #00ffcc;
+      animation: float 3s ease-in-out infinite;
+    }
 
-    footer{ text-align:center; margin-top:18px; color:var(--muted); font-size:0.9rem; }
+    .title h1 {
+      font-size: 38px;
+      margin: 0;
+      color: #ffcc00;
+      text-shadow: 0 0 15px #ff8800;
+    }
 
-    /* small responsive */
-    @media (max-width:600px){
-      .wrap{ margin:30px 12px; padding:18px; }
-      h1{ font-size:1.6rem; }
+    .title p {
+      font-size: 18px;
+      opacity: 0.8;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(-50%, -48%); }
+      50% { transform: translate(-50%, -52%); }
+    }
+
+    /* Small footer */
+    footer {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      color: #888;
+      text-align: center;
     }
   </style>
 </head>
+
 <body>
-  <canvas id="gameCanvas"></canvas>
+  <div class="game-container">
+    <div id="bat"></div>
+    <div id="ball"></div>
+    <div id="scoreboard">Score: <span id="score">0</span></div>
 
-  <div class="wrap">
-    <header>
-      <h1>🏏 Raj Kumar Guguloth</h1>
-      <p class="lead">Front-End Developer • MCA (2021) — Karimnagar, Telangana</p>
-      <p class="lead" style="margin-top:6px;">Phone: 7013511294 · Email: rajkumar970538@gmail.com</p>
-    </header>
+    <div class="title">
+      <h1>Raj Kumar Guguloth</h1>
+      <p>Frontend Developer | MCA 2021 | Telangana</p>
+    </div>
 
-    <section id="about">
-      <h2>About Me</h2>
-      <p>I completed MCA (2021) from Sri Chaitanya College of Engineering. Currently working as an Inventory Executive at CEC Health Care and transitioning into Front-End development (HTML/CSS/JS/React).</p>
-    </section>
+    <footer>Move the bat with your mouse 🏏 | Hit the ball to increase your score!</footer>
+  </div>
 
-    <section id="projects">
-      <h2>Projects</h2>
-      <ul>
-        <li><strong>Online Public Shaming Detection on Twitter</strong> — Analysis & mitigation using NLP and rule-based methods.</li>
-        <li><strong>Email Alerts on WhatsApp (Twilio)</strong> — Automated email → WhatsApp alerts using Twilio API.</li>
-      </ul>
-    </section>
+  <script>
+    const bat = document.getElementById("bat");
+    const ball = document.getElementById("ball");
+    const scoreEl = document.getElementById("score");
 
-    <section id="skills">
-      <h
+    let score = 0;
+    let ballX = 100;
+    let ballY = 100;
+    let ballSpeedX = 4;
+    let ballSpeedY = 4;
+
+    // Move bat with mouse
+    document.addEventListener("mousemove", (e) => {
+      let x = e.clientX - bat.offsetWidth / 2;
+      if (x < 0) x = 0;
+      if (x > window.innerWidth - bat.offsetWidth) x = window.innerWidth - bat.offsetWidth;
+      bat.style.left = x + "px";
+    });
+
+    // Ball animation
+    function moveBall() {
+      ballX += ballSpeedX;
+      ballY += ballSpeedY;
+
+      if (ballX <= 0 || ballX >= window.innerWidth - ball.offsetWidth) ballSpeedX *= -1;
+      if (ballY <= 0) ballSpeedY *= -1;
+
+      // Bat collision
+      const batRect = bat.getBoundingClientRect();
+      const ballRect = ball.getBoundingClientRect();
+
+      if (
+        ballRect.bottom >= batRect.top &&
+        ballRect.right >= batRect.left &&
+        ballRect.left <= batRect.right &&
+        ballRect.top <= batRect.bottom
+      ) {
+        ballSpeedY *= -1;
+        score++;
+        scoreEl.textContent = score;
+
+        // Add little flash effect
+        bat.style.boxShadow = "0 0 30px #fff";
+        setTimeout(() => (bat.style.boxShadow = "0 0 15px #ff8800"), 150);
+      }
+
+      // Ball reset if missed
+      if (ballY > window.innerHeight) {
+        ballX = Math.random() * (window.innerWidth - 50);
+        ballY = 50;
+        score = 0;
+        scoreEl.textContent = score;
+      }
+
+      ball.style.left = ballX + "px";
+      ball.style.top = ballY + "px";
+
+      requestAnimationFrame(moveBall);
+    }
+
+    moveBall();
+  </script>
+</body>
+</html>
