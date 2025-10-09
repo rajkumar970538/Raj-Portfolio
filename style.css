@@ -1,48 +1,382 @@
-:root {
-  --primary: #1f78ff;
-  --bg-color: #f4f4f9;
-  --text-color: #333;
-  --card-bg: white;
-}
+/* -------------------------
+  Portfolio Game Script
+  - Start/levels + canvas bat & ball
+  - Move avatar with arrow keys or mouse
+  - Collect skill orbs, interact with project blocks
+  - Bat follows mouse & clicks hit the ball
+---------------------------*/
 
-[data-theme="dark"] {
-  --bg-color: #1c1c1c;
-  --text-color: #f4f4f9;
-  --card-bg: #2c2c2c;
-}
+(() => {
+  // Basic profile/project data (edit here)
+  const PROFILE = {
+    name: "Raj Kumar Guguloth",
+    title: "Front-End Developer | MCA 2021",
+    phone: "7013511294",
+    email: "rajkumar970538@gmail.com",
+    projects: [
+      {
+        id: "proj1",
+        title: "Online Public Shaming Detection on Twitter",
+        text: "Analysis and mitigation of online public shaming content. Techniques: NLP, sentiment analysis, rule-based mitigation.",
+        link: "#"
+      },
+      {
+        id: "proj2",
+        title: "Email Alerts on WhatsApp by Twilio",
+        text: "Automated email notifications delivered to WhatsApp using Twilio API and server-side automation.",
+        link: "#"
+      }
+    ],
+    skills: [
+      { name: "HTML", level: "90%" },
+      { name: "CSS", level: "85%" },
+      { name: "JavaScript", level: "80%" },
+      { name: "React.js", level: "70%" },
+      { name: "Bootstrap/Tailwind", level: "75%" }
+    ],
+    hobbies: ["Playing cricket", "Watching movies"],
+    extra: "Good at crafting prompts to get right answers from AI"
+  };
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+  // UI elements
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+  const startBtn = document.getElementById("startBtn");
+  const startScreen = document.getElementById("startScreen");
+  const hud = document.getElementById("hud");
+  const levelIndicator = document.getElementById("levelIndicator");
+  const orbsCountEl = document.getElementById("orbsCount");
+  const modal = document.getElementById("modal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalText = document.getElementById("modalText");
+  const modalLinks = document.getElementById("modalLinks");
+  const modalClose = document.getElementById("modalClose");
+  const endScreen = document.getElementById("endScreen");
+  const startScreenNode = document.getElementById("startScreen");
+  const muteBtn = document.getElementById("muteBtn");
+  const restartBtn = document.getElementById("restartBtn");
+  const replayBtn = document.getElementById("replayBtn");
 
-body { background-color: var(--bg-color); color: var(--text-color); transition: 0.3s; }
+  // audio (optional)
+  let audioEnabled = false;
+  const blip = new Audio("assets/blip.mp3");
+  blip.volume = 0.2;
+  // toggle muting
+  muteBtn.addEventListener("click", () => {
+    audioEnabled = !audioEnabled;
+    muteBtn.textContent = audioEnabled ? "🔇" : "🔈";
+  });
 
-canvas#gameCanvas { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
+  // canvas sizing
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resize);
+  resize();
 
-.toggle-btn {
-  position: fixed; top: 20px; right: 20px;
-  cursor: pointer; background-color: var(--primary);
-  color:white; border:none; padding:0.5rem 1rem; border-radius:5px; z-index: 100;
-}
+  // game state
+  let state = {
+    running: false,
+    level: 1,
+    orbs: 0,
+    maxLevel: 5,
+    player: { x: 120, y: 120, r: 14, speed: 4 },
+    orbsList: [],
+    projBlocks: [],
+    bat: { w: 120, h: 18, x: canvas.width/2 - 60, y: canvas.height - 90 },
+    ball: { x: 200, y: 140, r: 12, dx: 3.5, dy: 3.2 }
+  };
 
-header.hero { text-align:center; padding:5rem 1rem; position:relative; }
-header.hero img.profile-img { width:150px; height:150px; border-radius:50%; border:4px solid white; }
-.floating-icons { position:absolute; top:20px; right:50px; display:flex; gap:1rem; }
-.hobby-icon { width:50px; height:50px; animation: float 4s ease-in-out infinite; }
+  // helper: draw rounded rect
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
 
-@keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-20px);} }
+  // generate skill orbs randomly across the stage
+  function spawnOrbs(n=6) {
+    state.orbsList = [];
+    for(let i=0;i<n;i++){
+      const padding = 80;
+      const x = padding + Math.random()*(canvas.width-2*padding);
+      const y = padding + Math.random()*(canvas.height-2*padding);
+      state.orbsList.push({ x, y, r: 12, id: `orb${i}`, name: PROFILE.skills[i % PROFILE.skills.length].name });
+    }
+  }
 
-section { max-width:1000px; margin:2rem auto; padding:2rem; background-color:var(--card-bg); border-radius:15px; box-shadow:0 0 20px rgba(0,0,0,0.1); }
+  // create project blocks
+  function spawnProjects(){
+    state.projBlocks = [];
+    const gap = 220;
+    const mid = canvas.width/2;
+    state.projBlocks.push({ x: mid - gap/2 - 120, y: canvas.height/2 - 40, w:220, h:120, id:"proj1", title: PROFILE.projects[0].title });
+    state.projBlocks.push({ x: mid + gap/2 - 100, y: canvas.height/2 - 40, w:220, h:120, id:"proj2", title: PROFILE.projects[1].title });
+  }
 
-h2 { text-align:center; color:var(--primary); margin-bottom:1rem; }
+  // show modal with details
+  function showModal(title, text, linksHtml=""){
+    modal.classList.remove("hidden");
+    modal.classList.add("active");
+    modalTitle.textContent = title;
+    modalText.textContent = text;
+    modalLinks.innerHTML = linksHtml;
+    // pause the game visually
+  }
+  modalClose.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    modal.classList.remove("active");
+  });
 
-.skill-bar { width:100%; background:#ddd; border-radius:10px; overflow:hidden; height:15px; margin-bottom:1rem; }
-.skill-bar div { height:100%; width:0; background-color:var(--primary); border-radius:10px; transition:width 1.5s; }
+  // Start / restart
+  function startGame(){
+    startScreen.classList.add("hidden");
+    hud.style.display = "flex";
+    state.running = true;
+    state.level = 1;
+    state.orbs = 0;
+    orbsCountEl.textContent = state.orbs;
+    levelIndicator.textContent = `Level ${state.level}`;
+    spawnOrbs(6);
+    spawnProjects();
+    if(audioEnabled) blip.play();
+  }
+  startBtn.addEventListener("click", startGame);
+  restartBtn.addEventListener("click", () => location.reload());
+  replayBtn?.addEventListener("click", () => location.reload());
 
-.project { padding:1rem; border:1px solid #ddd; border-radius:10px; margin-bottom:1rem; transition:0.3s; }
-.project:hover { transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.15); }
+  // Player control (arrow keys + mouse follow)
+  const keys = { ArrowUp:false, ArrowDown:false, ArrowLeft:false, ArrowRight:false };
+  window.addEventListener("keydown", e => { if(keys.hasOwnProperty(e.key)) keys[e.key]=true; });
+  window.addEventListener("keyup", e => { if(keys.hasOwnProperty(e.key)) keys[e.key]=false; });
 
-.timeline-item { opacity:0; transform:translateY(50px); transition:0.6s; padding:1rem; }
-.timeline-item.show { opacity:1; transform:translateY(0); }
+  // mouse moves bat-follow (player will also follow mouse optionally)
+  let mouse = { x: state.player.x, y: state.player.y, down:false };
+  window.addEventListener("mousemove", e => {
+    mouse.x = e.clientX; mouse.y = e.clientY;
+    // if mouse used, move player slowly towards mouse
+    if(state.running) {
+      // optional: comment this to disable mouse movement of player
+      state.player.x += (mouse.x - state.player.x) * 0.08;
+      state.player.y += (mouse.y - state.player.y) * 0.08;
+    }
+    // bat follows mouse too
+    state.bat.x = mouse.x - state.bat.w/2;
+    state.bat.y = mouse.y - state.bat.h/2;
+  });
 
-footer { text-align:center; padding:1.5rem; font-size:0.9rem; color:#777; margin-top:2rem; }
+  window.addEventListener("mousedown", ()=> { mouse.down = true; if(audioEnabled) blip.play(); });
+  window.addEventListener("mouseup", ()=> { mouse.down = false; });
 
-@media(max-width:768px){ .floating-icons { top:10px; right:10px; } }
+  // simple collision helpers
+  function dist(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
+  function rectCircleCollide(rect, circle){
+    const rx = Math.max(rect.x, Math.min(circle.x, rect.x + rect.w));
+    const ry = Math.max(rect.y, Math.min(circle.y, rect.y + rect.h));
+    return ( (circle.x - rx)**2 + (circle.y - ry)**2 ) < circle.r**2;
+  }
+
+  // game loop / draw
+  function loop(){
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+
+    if(!state.running){
+      requestAnimationFrame(loop);
+      return;
+    }
+
+    // update player by keys
+    const p = state.player;
+    if(keys.ArrowLeft) p.x -= p.speed;
+    if(keys.ArrowRight) p.x += p.speed;
+    if(keys.ArrowUp) p.y -= p.speed;
+    if(keys.ArrowDown) p.y += p.speed;
+
+    // clamp player to viewport
+    p.x = Math.max(30, Math.min(canvas.width - 30, p.x));
+    p.y = Math.max(30, Math.min(canvas.height - 30, p.y));
+
+    // draw orbs (skill orbs)
+    for(let i=state.orbsList.length-1;i>=0;i--){
+      const o = state.orbsList[i];
+      // glow
+      ctx.beginPath();
+      const grad = ctx.createRadialGradient(o.x, o.y, 2, o.x, o.y, o.r*3);
+      grad.addColorStop(0, "rgba(31,241,214,0.18)");
+      grad.addColorStop(1, "transparent");
+      ctx.fillStyle = grad;
+      ctx.fillRect(o.x-o.r*3, o.y-o.r*3, o.r*6, o.r*6);
+      ctx.closePath();
+
+      ctx.beginPath();
+      ctx.fillStyle = "#1ff1d6";
+      ctx.arc(o.x, o.y, o.r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.closePath();
+
+      // label
+      ctx.fillStyle = "rgba(0,0,0,0.7)";
+      ctx.font = "12px system-ui";
+      ctx.fillText(o.name, o.x - o.r, o.y + o.r + 14);
+
+      // collide with player
+      if(dist(p, o) < p.r + o.r){
+        // collect
+        state.orbs++;
+        orbsCountEl.textContent = state.orbs;
+        state.orbsList.splice(i,1);
+        if(audioEnabled) blip.play();
+      }
+    }
+
+    // Project blocks
+    state.projBlocks.forEach(block => {
+      // draw block
+      roundRect(block.x, block.y, block.w, block.h, 8);
+      ctx.fillStyle = "rgba(111,140,255,0.12)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(111,140,255,0.18)";
+      ctx.stroke();
+      // title
+      ctx.fillStyle = "#cfe6ff";
+      ctx.font = "bold 14px system-ui";
+      ctx.fillText(block.title, block.x + 12, block.y + 28);
+
+      // interaction: if player touches block -> show project modal
+      const circle = { x: p.x, y: p.y, r: p.r };
+      const rect = { x: block.x, y: block.y, w: block.w, h: block.h };
+      if(rectCircleCollide(rect, circle)){
+        // show details for this project
+        const proj = PROFILE.projects.find(pp => pp.title === block.title);
+        if(proj){
+          showModal(proj.title, proj.text, `<a href="${proj.link}" target="_blank">GitHub / Demo</a>`);
+          // move player slightly away so modal doesn't spam
+          p.x -= 80;
+        }
+      }
+    });
+
+    // draw player (glowing orb)
+    ctx.beginPath();
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = "#1ff1d6";
+    ctx.shadowBlur = 18;
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.shadowBlur = 0;
+
+    // draw bat
+    const b = state.bat;
+    ctx.fillStyle = "#6f8cff";
+    roundRect(b.x, b.y, b.w, b.h, 6);
+    ctx.fill();
+
+    // draw ball and physics
+    const ball = state.ball;
+    ctx.beginPath();
+    ctx.fillStyle = "#ff8a60";
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
+    ctx.fill();
+    ctx.closePath();
+
+    // move ball
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    // bounce off edges
+    if(ball.x + ball.r > canvas.width || ball.x - ball.r < 0) ball.dx *= -1;
+    if(ball.y + ball.r > canvas.height || ball.y - ball.r < 0) ball.dy *= -1;
+
+    // ball and bat collision
+    const batRect = { x: b.x, y: b.y, w: b.w, h: b.h };
+    if(rectCircleCollide(batRect, ball)){
+      // reflect Y and add some X based on collision point
+      ball.dy = -Math.abs(ball.dy);
+      const hitPoint = (ball.x - (b.x + b.w/2)) / (b.w/2); // -1..1
+      ball.dx += hitPoint * 1.6;
+      if(audioEnabled) blip.play();
+    }
+
+    // if player clicks bat -> stronger hit if mouse down near bat
+    if(mouse.down){
+      // simple impulse when clicking
+      if(dist({x: mouse.x, y: mouse.y}, {x: b.x + b.w/2, y: b.y + b.h/2}) < 140){
+        ball.dy -= 0.6;
+        ball.dx += (Math.random()-0.5)*1.2;
+      }
+    }
+
+    // level progression: when all orbs collected -> advance to next level
+    if(state.orbsList.length === 0 && state.level === 1){
+      // spawn new orbs / blocks and bump level
+      state.level = 2;
+      levelIndicator.textContent = `Level ${state.level}`;
+      // spawn more orbs in new positions
+      spawnOrbs(5);
+      spawnProjects();
+    }
+
+    // finish condition: if level >= maxLevel trigger end screen when player reaches bottom-right portal
+    if(state.level >= state.maxLevel){
+      // simple portal area bottom-right
+      const portal = { x: canvas.width - 140, y: canvas.height - 140, r: 36 };
+      // draw portal
+      const gradP = ctx.createRadialGradient(portal.x, portal.y, 10, portal.x, portal.y, portal.r*2);
+      gradP.addColorStop(0, "rgba(111,140,255,0.9)");
+      gradP.addColorStop(1, "transparent");
+      ctx.fillStyle = gradP;
+      ctx.beginPath(); ctx.arc(portal.x, portal.y, portal.r*1.8, 0, Math.PI*2); ctx.fill(); ctx.closePath();
+
+      if(dist({x:p.x,y:p.y}, portal) < portal.r + p.r){
+        // end
+        state.running = false;
+        // show end screen UI
+        document.getElementById("endScreen").classList.remove("hidden");
+      }
+    } else {
+      // small chance to increase level if orbs reach threshold
+      // for demo, after collecting 10 or reach certain time -> increment level
+      if(state.orbs >= 10 && state.level < state.maxLevel){
+        state.level++;
+        levelIndicator.textContent = `Level ${state.level}`;
+        // progressively make the game slightly harder
+        state.ball.dx *= 1.05;
+        state.ball.dy *= 1.05;
+      }
+    }
+
+    requestAnimationFrame(loop);
+  } // end loop
+
+  // initialize: show start UI/hide hud
+  hud.style.display = "none";
+  modal.classList.add("hidden");
+  document.getElementById("endScreen").classList.add("hidden");
+
+  // Show project modal also when clicked on HUD (for testing)
+  // hook modal to close
+  modalClose.addEventListener("click", () => { modal.classList.add("hidden"); });
+
+  // provide quick keyboard short for showing About
+  window.addEventListener("keydown", e => {
+    if(e.key === "i") {
+      showModal(PROFILE.name, PROFILE.title + "\n\n" + PROFILE.extra, "");
+    }
+  });
+
+  // Start the loop
+  loop();
+
+  // Small tip: preload images currently used in HTML to avoid blank
+  const preload = ["assets/profile.jpg", "assets/cricket.png", "assets/movie.png"];
+  preload.forEach(src => {
+    const img = new Image(); img.src = src;
+  });
+
+})();
