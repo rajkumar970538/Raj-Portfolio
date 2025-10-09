@@ -1,56 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Raj Kumar Guguloth — Frontend Quest</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raj Kumar Guguloth | Portfolio</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-theme="dark">
-  <!-- Canvas for game -->
+<body>
   <canvas id="gameCanvas"></canvas>
 
-  <!-- UI overlays -->
-  <div id="ui">
-    <div id="startScreen" class="screen active">
-      <img src="assets/profile.jpg" alt="Raj" id="profilePreview" />
-      <h1>Raj Kumar Guguloth</h1>
-      <h3>Front-End Developer • MCA 2021</h3>
-      <p class="muted">Press Start to play the portfolio — move with Arrow keys or mouse. Collect orbs, explore projects & have fun!</p>
-      <button id="startBtn" class="primary">START</button>
-      <div class="small">Use <strong>Arrow Keys</strong> or <strong>Mouse</strong>. Click bat to hit ball.</div>
-    </div>
+  <div class="container">
+    <header>
+      <h1>🏏 Raj Kumar Guguloth</h1>
+      <p>Front-End Developer | MCA (2021)</p>
+    </header>
 
-    <div id="hud" class="screen">
-      <div id="levelIndicator">Level 1</div>
-      <div id="score">Orbs: <span id="orbsCount">0</span></div>
-      <button id="muteBtn">🔈</button>
-      <button id="restartBtn">Restart</button>
-    </div>
+    <section class="about">
+      <h2>About Me</h2>
+      <p>
+        Hi, I'm Raj Kumar from Karimnagar, Telangana. I completed my MCA from
+        Sri Chaitanya College of Engineering in 2021. Currently, I'm working as
+        an Inventory Executive at CEC Health Care, and I'm passionate about
+        becoming a creative Front-End Developer.
+      </p>
+    </section>
 
-    <div id="modal" class="screen hidden">
-      <div id="modalContent">
-        <h2 id="modalTitle"></h2>
-        <p id="modalText"></p>
-        <div id="modalLinks"></div>
-        <button id="modalClose" class="primary">Close</button>
-      </div>
-    </div>
+    <section class="projects">
+      <h2>Projects</h2>
+      <ul>
+        <li>🧠 <strong>Online Public Shaming on Twitter:</strong> Detection, Analysis, and Mitigation</li>
+        <li>📱 <strong>Email Alerts on WhatsApp:</strong> Using Twilio API for instant message notifications</li>
+      </ul>
+    </section>
 
-    <div id="endScreen" class="screen hidden">
-      <h2>Thanks for playing!</h2>
-      <p>Contact: <strong>7013511294</strong> • <strong>rajkumar970538@gmail.com</strong></p>
-      <p>LinkedIn: <span id="linkedin-placeholder">[Coming Soon]</span> • GitHub: <span id="github-placeholder">[Coming Soon]</span></p>
-      <button id="replayBtn" class="primary">Play Again</button>
-    </div>
+    <section class="skills">
+      <h2>Skills</h2>
+      <p>HTML | CSS | JavaScript | GitHub | AI Prompting</p>
+    </section>
+
+    <section class="hobbies">
+      <h2>Hobbies</h2>
+      <p>🏏 Playing Cricket | 🎬 Watching Movies</p>
+    </section>
+
+    <section class="contact">
+      <h2>Contact</h2>
+      <p>📞 7013511294 | 📧 rajkumar970538@gmail.com</p>
+      <p>
+        🔗 LinkedIn: <a href="#">(Add later)</a> |
+        💻 GitHub: <a href="#">(Add later)</a>
+      </p>
+    </section>
+
+    <footer>
+      <p>© 2025 Raj Kumar Guguloth | Cinematic Portfolio Edition 🎥</p>
+    </footer>
   </div>
-
-  <!-- Info sections (accessible via modal when player interacts) -->
-  <!-- Projects / Skills metadata are in script.js for easier editing -->
-
-  <footer id="footer">
-    <div>Made by Raj Kumar • MCA 2021 • Inventory Exec @ CEC Health Care</div>
-  </footer>
 
   <script src="script.js"></script>
 </body>
