@@ -1,175 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Raj Kumar | Bat & Ball Portfolio Demo</title>
-
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: radial-gradient(circle at center, #0a0a0a, #000);
-      color: white;
-      font-family: "Poppins", sans-serif;
-    }
-
-    .game-container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    #bat {
-      position: absolute;
-      width: 120px;
-      height: 20px;
-      background: linear-gradient(90deg, #ffcc00, #ff8800);
-      border-radius: 10px;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: left 0.05s ease;
-      box-shadow: 0 0 15px #ff8800;
-    }
-
-    #ball {
-      position: absolute;
-      width: 25px;
-      height: 25px;
-      background: radial-gradient(circle, #00ffcc, #0077ff);
-      border-radius: 50%;
-      top: 100px;
-      left: 100px;
-      box-shadow: 0 0 15px #00ffcc;
-    }
-
-    #scoreboard {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 22px;
-      color: #00ffcc;
-      font-weight: 600;
-    }
-
-    /* Floating title */
-    .title {
-      position: absolute;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      color: #00ffcc;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    .title h1 {
-      font-size: 38px;
-      margin: 0;
-      color: #ffcc00;
-      text-shadow: 0 0 15px #ff8800;
-    }
-
-    .title p {
-      font-size: 18px;
-      opacity: 0.8;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translate(-50%, -48%); }
-      50% { transform: translate(-50%, -52%); }
-    }
-
-    /* Small footer */
-    footer {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 14px;
-      color: #888;
-      text-align: center;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raj Kumar Guguloth - Portfolio</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+<body data-theme="light">
 
-<body>
-  <div class="game-container">
-    <div id="bat"></div>
-    <div id="ball"></div>
-    <div id="scoreboard">Score: <span id="score">0</span></div>
+  <!-- Canvas for bat & ball -->
+  <canvas id="gameCanvas"></canvas>
 
-    <div class="title">
-      <h1>Raj Kumar Guguloth</h1>
-      <p>Frontend Developer | MCA 2021 | Telangana</p>
+  <!-- Dark/Light toggle -->
+  <button id="theme-toggle" class="toggle-btn">Dark Mode</button>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <img src="images/profile.jpg" alt="Raj Kumar Guguloth" class="profile-img">
+    <h1>Raj Kumar Guguloth</h1>
+    <p>Front-End Developer | MCA 2021</p>
+    <div class="floating-icons">
+      <img src="images/cricket.png" alt="Cricket" class="hobby-icon">
+      <img src="images/movie.png" alt="Movie" class="hobby-icon">
     </div>
+  </header>
 
-    <footer>Move the bat with your mouse 🏏 | Hit the ball to increase your score!</footer>
-  </div>
+  <!-- About Section -->
+  <section id="about">
+    <h2>About Me</h2>
+    <p>MCA graduate passionate about creating interactive web applications. Currently working as Inventory Executive, now pursuing a Front-End Developer role.</p>
+  </section>
 
-  <script>
-    const bat = document.getElementById("bat");
-    const ball = document.getElementById("ball");
-    const scoreEl = document.getElementById("score");
+  <!-- Skills Section -->
+  <section id="skills">
+    <h2>Skills</h2>
+    <div class="skill">
+      <div class="skill-name">HTML</div>
+      <div class="skill-bar"><div style="--skill-level:90%;"></div></div>
+    </div>
+    <div class="skill">
+      <div class="skill-name">CSS</div>
+      <div class="skill-bar"><div style="--skill-level:85%;"></div></div>
+    </div>
+    <div class="skill">
+      <div class="skill-name">JavaScript</div>
+      <div class="skill-bar"><div style="--skill-level:80%;"></div></div>
+    </div>
+    <div class="skill">
+      <div class="skill-name">React.js</div>
+      <div class="skill-bar"><div style="--skill-level:70%;"></div></div>
+    </div>
+    <div class="skill">
+      <div class="skill-name">Bootstrap/Tailwind</div>
+      <div class="skill-bar"><div style="--skill-level:75%;"></div></div>
+    </div>
+  </section>
 
-    let score = 0;
-    let ballX = 100;
-    let ballY = 100;
-    let ballSpeedX = 4;
-    let ballSpeedY = 4;
+  <!-- Projects Section -->
+  <section id="projects">
+    <h2>Projects</h2>
+    <div class="project">
+      <h3>Online Public Shaming Detection on Twitter</h3>
+      <p>Analysis and mitigation of online public shaming content.</p>
+      <a href="#" target="_blank">GitHub Link</a>
+    </div>
+    <div class="project">
+      <h3>Email Alerts on WhatsApp by Twilio</h3>
+      <p>Automated email notifications sent to WhatsApp using Twilio.</p>
+      <a href="#" target="_blank">GitHub Link</a>
+    </div>
+  </section>
 
-    // Move bat with mouse
-    document.addEventListener("mousemove", (e) => {
-      let x = e.clientX - bat.offsetWidth / 2;
-      if (x < 0) x = 0;
-      if (x > window.innerWidth - bat.offsetWidth) x = window.innerWidth - bat.offsetWidth;
-      bat.style.left = x + "px";
-    });
+  <!-- Timeline Section -->
+  <section id="timeline">
+    <h2>Education & Experience</h2>
+    <div class="timeline-item left">
+      <h3>MCA – Sri Chaitanya College of Engineering (2021)</h3>
+      <p>Completed Master of Computer Applications with focus on software development.</p>
+    </div>
+    <div class="timeline-item right">
+      <h3>Inventory Executive – CEC Health Care (2021–Present)</h3>
+      <p>Managed inventory and optimized workflows.</p>
+    </div>
+  </section>
 
-    // Ball animation
-    function moveBall() {
-      ballX += ballSpeedX;
-      ballY += ballSpeedY;
+  <!-- Contact Section -->
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Phone: 7013511294</p>
+    <p>Email: rajkumar970538@gmail.com</p>
+    <p>LinkedIn: <span id="linkedin-placeholder">[Coming Soon]</span></p>
+    <p>GitHub: <span id="github-placeholder">[Coming Soon]</span></p>
+  </section>
 
-      if (ballX <= 0 || ballX >= window.innerWidth - ball.offsetWidth) ballSpeedX *= -1;
-      if (ballY <= 0) ballSpeedY *= -1;
+  <footer>&copy; 2025 Raj Kumar Guguloth. All rights reserved.</footer>
 
-      // Bat collision
-      const batRect = bat.getBoundingClientRect();
-      const ballRect = ball.getBoundingClientRect();
-
-      if (
-        ballRect.bottom >= batRect.top &&
-        ballRect.right >= batRect.left &&
-        ballRect.left <= batRect.right &&
-        ballRect.top <= batRect.bottom
-      ) {
-        ballSpeedY *= -1;
-        score++;
-        scoreEl.textContent = score;
-
-        // Add little flash effect
-        bat.style.boxShadow = "0 0 30px #fff";
-        setTimeout(() => (bat.style.boxShadow = "0 0 15px #ff8800"), 150);
-      }
-
-      // Ball reset if missed
-      if (ballY > window.innerHeight) {
-        ballX = Math.random() * (window.innerWidth - 50);
-        ballY = 50;
-        score = 0;
-        scoreEl.textContent = score;
-      }
-
-      ball.style.left = ballX + "px";
-      ball.style.top = ballY + "px";
-
-      requestAnimationFrame(moveBall);
-    }
-
-    moveBall();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
