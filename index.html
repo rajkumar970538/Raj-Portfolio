@@ -1,101 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Raj Kumar Guguloth - Portfolio</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Raj Kumar Guguloth — Frontend Quest</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body data-theme="light">
-
-  <!-- Canvas for bat & ball -->
+<body data-theme="dark">
+  <!-- Canvas for game -->
   <canvas id="gameCanvas"></canvas>
 
-  <!-- Dark/Light toggle -->
-  <button id="theme-toggle" class="toggle-btn">Dark Mode</button>
+  <!-- UI overlays -->
+  <div id="ui">
+    <div id="startScreen" class="screen active">
+      <img src="assets/profile.jpg" alt="Raj" id="profilePreview" />
+      <h1>Raj Kumar Guguloth</h1>
+      <h3>Front-End Developer • MCA 2021</h3>
+      <p class="muted">Press Start to play the portfolio — move with Arrow keys or mouse. Collect orbs, explore projects & have fun!</p>
+      <button id="startBtn" class="primary">START</button>
+      <div class="small">Use <strong>Arrow Keys</strong> or <strong>Mouse</strong>. Click bat to hit ball.</div>
+    </div>
 
-  <!-- Hero Section -->
-  <header class="hero">
-    <img src="images/profile.jpg" alt="Raj Kumar Guguloth" class="profile-img">
-    <h1>Raj Kumar Guguloth</h1>
-    <p>Front-End Developer | MCA 2021</p>
-    <div class="floating-icons">
-      <img src="images/cricket.png" alt="Cricket" class="hobby-icon">
-      <img src="images/movie.png" alt="Movie" class="hobby-icon">
+    <div id="hud" class="screen">
+      <div id="levelIndicator">Level 1</div>
+      <div id="score">Orbs: <span id="orbsCount">0</span></div>
+      <button id="muteBtn">🔈</button>
+      <button id="restartBtn">Restart</button>
     </div>
-  </header>
 
-  <!-- About Section -->
-  <section id="about">
-    <h2>About Me</h2>
-    <p>MCA graduate passionate about creating interactive web applications. Currently working as Inventory Executive, now pursuing a Front-End Developer role.</p>
-  </section>
+    <div id="modal" class="screen hidden">
+      <div id="modalContent">
+        <h2 id="modalTitle"></h2>
+        <p id="modalText"></p>
+        <div id="modalLinks"></div>
+        <button id="modalClose" class="primary">Close</button>
+      </div>
+    </div>
 
-  <!-- Skills Section -->
-  <section id="skills">
-    <h2>Skills</h2>
-    <div class="skill">
-      <div class="skill-name">HTML</div>
-      <div class="skill-bar"><div style="--skill-level:90%;"></div></div>
+    <div id="endScreen" class="screen hidden">
+      <h2>Thanks for playing!</h2>
+      <p>Contact: <strong>7013511294</strong> • <strong>rajkumar970538@gmail.com</strong></p>
+      <p>LinkedIn: <span id="linkedin-placeholder">[Coming Soon]</span> • GitHub: <span id="github-placeholder">[Coming Soon]</span></p>
+      <button id="replayBtn" class="primary">Play Again</button>
     </div>
-    <div class="skill">
-      <div class="skill-name">CSS</div>
-      <div class="skill-bar"><div style="--skill-level:85%;"></div></div>
-    </div>
-    <div class="skill">
-      <div class="skill-name">JavaScript</div>
-      <div class="skill-bar"><div style="--skill-level:80%;"></div></div>
-    </div>
-    <div class="skill">
-      <div class="skill-name">React.js</div>
-      <div class="skill-bar"><div style="--skill-level:70%;"></div></div>
-    </div>
-    <div class="skill">
-      <div class="skill-name">Bootstrap/Tailwind</div>
-      <div class="skill-bar"><div style="--skill-level:75%;"></div></div>
-    </div>
-  </section>
+  </div>
 
-  <!-- Projects Section -->
-  <section id="projects">
-    <h2>Projects</h2>
-    <div class="project">
-      <h3>Online Public Shaming Detection on Twitter</h3>
-      <p>Analysis and mitigation of online public shaming content.</p>
-      <a href="#" target="_blank">GitHub Link</a>
-    </div>
-    <div class="project">
-      <h3>Email Alerts on WhatsApp by Twilio</h3>
-      <p>Automated email notifications sent to WhatsApp using Twilio.</p>
-      <a href="#" target="_blank">GitHub Link</a>
-    </div>
-  </section>
+  <!-- Info sections (accessible via modal when player interacts) -->
+  <!-- Projects / Skills metadata are in script.js for easier editing -->
 
-  <!-- Timeline Section -->
-  <section id="timeline">
-    <h2>Education & Experience</h2>
-    <div class="timeline-item left">
-      <h3>MCA – Sri Chaitanya College of Engineering (2021)</h3>
-      <p>Completed Master of Computer Applications with focus on software development.</p>
-    </div>
-    <div class="timeline-item right">
-      <h3>Inventory Executive – CSC Health Care (2021–Present)</h3>
-      <p>Managed inventory and optimized workflows.</p>
-    </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section id="contact">
-    <h2>Contact</h2>
-    <p>Phone: 7013511294</p>
-    <p>Email: rajkumar970538@gmail.com</p>
-    <p>LinkedIn: <span id="linkedin-placeholder">[Coming Soon]</span></p>
-    <p>GitHub: <span id="github-placeholder">[Coming Soon]</span></p>
-  </section>
-
-  <footer>&copy; 2025 Raj Kumar Guguloth. All rights reserved.</footer>
+  <footer id="footer">
+    <div>Made by Raj Kumar • MCA 2021 • Inventory Exec @ CEC Health Care</div>
+  </footer>
 
   <script src="script.js"></script>
 </body>
 </html>
-
